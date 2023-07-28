@@ -19,7 +19,7 @@ model User {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   vehicles    Vehicle[]
-  Purchase    Purchase[]
+  purchases   Purchase[]
 }
 
 model Vehicle {
