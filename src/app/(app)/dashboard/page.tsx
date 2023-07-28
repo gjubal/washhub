@@ -10,13 +10,16 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <>
-      <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+    <div className="flex flex-col gap-8">
+      <div className="flex w-full justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+
+        <Search />
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <TotalUserCount />
         <TotalMembershipCount />
-        <Search />
       </div>
-    </>
+    </div>
   )
 }

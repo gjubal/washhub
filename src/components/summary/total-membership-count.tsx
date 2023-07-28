@@ -44,6 +44,7 @@ export async function TotalMembershipCount() {
         </span>
         <p className="text-xs text-muted-foreground">
           + {totalActiveMembershipsAddedLastMonth._count._all} in the last 30
+          days
         </p>
       </CardContent>
     </Card>

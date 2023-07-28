@@ -90,6 +90,7 @@ export function Search() {
                     onSelect={() => router.push(`/users/${user.id}`)}
                     key={user.id}
                     value={user.id}
+                    className="cursor-pointer"
                   >
                     <UserIcon className="mr-2 h-3 w-3" />
                     <span>
