@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
-import { TotalUserCount } from '../../components/summary/total-user-count'
-import { TotalMembershipCount } from '../../components/summary/total-membership-count'
+import { TotalUserCount } from '@/components/summary/total-user-count'
+import { TotalMembershipCount } from '@/components/summary/total-membership-count'
+import { Search } from '@/components/search'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -14,6 +15,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 gap-4">
         <TotalUserCount />
         <TotalMembershipCount />
+        <Search />
       </div>
     </>
   )
