@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-interface GetUserParams {
+interface UserParams {
   params: {
     id: string
   }
 }
 
-export async function GET(_: Request, { params }: GetUserParams) {
+export async function GET(_: Request, { params }: UserParams) {
   const { vehicles: vehiclesData, ...userData } =
     await prisma.user.findUniqueOrThrow({
       where: { id: params.id },
@@ -55,4 +55,26 @@ export async function GET(_: Request, { params }: GetUserParams) {
   }
 
   return NextResponse.json({ user })
+}
+
+export async function PUT(request: Request, { params }: UserParams) {
+  const { id } = params
+  const { firstName, lastName, email, phoneNumber } = await request.json()
+
+  const user = await prisma.user.update({
+    where: { id },
+    data: { email, firstName, lastName, phoneNumber },
+  })
+
+  return NextResponse.json({ user })
+}
+
+export async function DELETE(_: Request, { params }: UserParams) {
+  const { id } = params
+
+  const user = await prisma.user.delete({ where: { id } })
+
+  if (!user) return NextResponse.error()
+
+  return NextResponse.json({ status: 'success' })
 }

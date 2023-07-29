@@ -34,10 +34,8 @@ export default async function UserPage({ params }: UserPageProps) {
         <h2 className="truncate text-3xl font-bold tracking-tight">Customer</h2>
 
         <div className="flex items-center gap-2">
-          <Button asChild className="w-[60px]">
-            <Link href="/create" prefetch={false}>
-              <PlusCircledIcon className="h-4 w-4" />
-            </Link>
+          <Button asChild className="h-[40px] w-[60px]">
+            <PlusCircledIcon className="h-4 w-4 cursor-pointer" />
           </Button>
           <Button variant="secondary" asChild>
             <a href={`/api/users/${userId}`} target="_blank" rel="noreferrer">

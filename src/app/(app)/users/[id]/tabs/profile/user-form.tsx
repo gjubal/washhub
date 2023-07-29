@@ -11,6 +11,7 @@ import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 import { User } from '@prisma/client'
+import { useRouter } from 'next/navigation'
 
 interface UserFormProps {
   user: User
@@ -44,6 +45,7 @@ const editUserFormSchema = z.object({
 export type EditUserFormSchema = z.infer<typeof editUserFormSchema>
 
 export function UserForm({ user }: UserFormProps) {
+  const router = useRouter()
   const editUserForm = useForm<EditUserFormSchema>({
     resolver: zodResolver(editUserFormSchema),
     defaultValues: {
@@ -60,11 +62,24 @@ export function UserForm({ user }: UserFormProps) {
     },
   )
 
+  const { mutateAsync: deleteUser } = useMutation(async () => {
+    await axios.delete(`/api/users/${user.id}`)
+  })
+
   async function onSaveUser(data: EditUserFormSchema) {
     try {
       await updateUser(data)
     } catch {
       console.log('Error saving the user')
+    }
+  }
+
+  async function onDeleteUser() {
+    try {
+      await deleteUser()
+      router.push('/dashboard')
+    } catch {
+      console.log('Error deleting the user')
     }
   }
 
@@ -132,6 +147,7 @@ export function UserForm({ user }: UserFormProps) {
             className="w-24 bg-red-500"
             type="button"
             disabled={isSubmitting}
+            onClick={onDeleteUser}
           >
             {isSubmitting ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
