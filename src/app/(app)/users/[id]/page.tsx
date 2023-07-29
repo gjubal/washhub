@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Overview } from './tabs/overview'
 import { Profile } from './tabs/profile'
+import { Payments } from './tabs/payments'
 
 interface UserPageProps {
   params: { id: string }
@@ -42,10 +43,14 @@ export default async function UserPage({ params }: UserPageProps) {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="profile">Profile</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
           <Overview userId={userId} />
+        </TabsContent>
+        <TabsContent value="payments">
+          <Payments userId={userId} />
         </TabsContent>
         <TabsContent value="profile">
           <Profile userId={userId} />
