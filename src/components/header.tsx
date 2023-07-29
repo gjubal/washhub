@@ -1,8 +1,3 @@
-import Link from 'next/link'
-
-import { PlusCircledIcon } from '@radix-ui/react-icons'
-
-import { Button } from './ui/button'
 import { NavLink } from './nav-link'
 import { ThemeSwitcher } from './theme-switcher'
 import { UserProfileButton } from './user-profile-button'
@@ -18,12 +13,6 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center space-x-4">
-          <Button asChild>
-            <Link href="/create" prefetch={false}>
-              <PlusCircledIcon className="mr-2 h-4 w-4" />
-              Create
-            </Link>
-          </Button>
           <ThemeSwitcher />
           <UserProfileButton />
         </div>

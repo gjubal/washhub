@@ -5,6 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Overview } from './tabs/overview'
 import { Profile } from './tabs/profile'
 import { Payments } from './tabs/payments'
+import { Subscriptions } from './tabs/subscriptions'
+import Link from 'next/link'
+import { PlusCircledIcon } from '@radix-ui/react-icons'
 
 interface UserPageProps {
   params: { id: string }
@@ -31,6 +34,11 @@ export default async function UserPage({ params }: UserPageProps) {
         <h2 className="truncate text-3xl font-bold tracking-tight">Customer</h2>
 
         <div className="flex items-center gap-2">
+          <Button asChild className="w-[60px]">
+            <Link href="/create" prefetch={false}>
+              <PlusCircledIcon className="h-4 w-4" />
+            </Link>
+          </Button>
           <Button variant="secondary" asChild>
             <a href={`/api/users/${userId}`} target="_blank" rel="noreferrer">
               <User2Icon className="mr-2 h-4 w-4" />
@@ -43,11 +51,15 @@ export default async function UserPage({ params }: UserPageProps) {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="profile">Profile</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
           <Overview userId={userId} />
+        </TabsContent>
+        <TabsContent value="subscriptions">
+          <Subscriptions userId={userId} />
         </TabsContent>
         <TabsContent value="payments">
           <Payments userId={userId} />
