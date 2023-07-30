@@ -14,16 +14,16 @@ export function SubscriptionsSkeletonTable({
         return (
           <TableRow key={row}>
             <TableCell>
-              <Skeleton className="h-4 w-[300px]" />
+              <Skeleton className="h-4 w-[350px]" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-[290px]" />
+              <Skeleton className="h-4 w-[320px]" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[270px]" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[180px]" />
             </TableCell>
           </TableRow>
         )
