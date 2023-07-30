@@ -6,8 +6,7 @@ import { Overview } from './tabs/overview'
 import { Profile } from './tabs/profile'
 import { Payments } from './tabs/payments'
 import { Subscriptions } from './tabs/subscriptions'
-import Link from 'next/link'
-import { PlusCircledIcon } from '@radix-ui/react-icons'
+import { CustomerDropdown } from '@/components/customer/customer-dropdown'
 
 interface UserPageProps {
   params: { id: string }
@@ -34,14 +33,10 @@ export default async function UserPage({ params }: UserPageProps) {
         <h2 className="truncate text-3xl font-bold tracking-tight">Customer</h2>
 
         <div className="flex items-center gap-2">
-          <Button asChild className="h-[40px] w-[60px]">
-            <PlusCircledIcon className="h-4 w-4 cursor-pointer" />
-          </Button>
-          <Button variant="secondary" asChild>
-            <a href={`/api/users/${userId}`} target="_blank" rel="noreferrer">
-              <User2Icon className="mr-2 h-4 w-4" />
-              <span>Download receipts</span>
-            </a>
+          <CustomerDropdown />
+          <Button variant="secondary">
+            <User2Icon className="mr-2 h-4 w-4" />
+            <span>Download receipts</span>
           </Button>
         </div>
       </div>
