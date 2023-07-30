@@ -83,8 +83,8 @@ export function Payments({ userId }: PaymentProps) {
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="">
-                          {payment.vehicle.year} {payment.vehicle.make}{' '}
-                          {payment.vehicle.model}
+                          {payment.vehicle?.year} {payment.vehicle?.make}{' '}
+                          {payment.vehicle?.model}
                         </span>
                       </div>
                     </TableCell>
