@@ -101,7 +101,7 @@ export function Subscriptions({ userId }: SubscriptionProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead style={{ width: 350 }}>
+              <TableHead style={{ width: 320 }}>
                 <div className="flex items-center gap-2">
                   <span>Vehicle</span>
                   {isLoadingSubscriptions && (
@@ -110,7 +110,7 @@ export function Subscriptions({ userId }: SubscriptionProps) {
                 </div>
               </TableHead>
               <TableHead style={{ width: 320 }}>Type</TableHead>
-              <TableHead style={{ width: 270 }}>Status</TableHead>
+              <TableHead style={{ width: 320 }}>Status</TableHead>
               <TableHead style={{ width: 180 }}>Latest payment date</TableHead>
             </TableRow>
           </TableHeader>

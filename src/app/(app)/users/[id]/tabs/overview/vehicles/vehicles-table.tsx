@@ -92,7 +92,7 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead style={{ width: 200 }}>
+            <TableHead style={{ width: 170 }}>
               <div className="flex items-center gap-2">
                 <span>Vehicle</span>
                 {isLoadingUser && (
@@ -100,8 +100,8 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                 )}
               </div>
             </TableHead>
-            <TableHead style={{ width: 120 }}>Subscription type</TableHead>
-            <TableHead style={{ width: 120 }}>Subscription status</TableHead>
+            <TableHead style={{ width: 170 }}>Membership status</TableHead>
+            <TableHead style={{ width: 170 }}>Membership type</TableHead>
             <TableHead style={{ width: 90 }}>Last payment date</TableHead>
           </TableRow>
         </TableHeader>

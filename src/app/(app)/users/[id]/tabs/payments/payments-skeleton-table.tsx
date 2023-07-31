@@ -14,16 +14,16 @@ export function PaymentsSkeletonTable({
         return (
           <TableRow key={row}>
             <TableCell>
-              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[320px]" />
             </TableCell>
             <TableCell>
               <Skeleton className="h-4 w-[320px]" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-[300px]" />
+              <Skeleton className="h-4 w-[320px]" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-[280px]" />
+              <Skeleton className="h-4 w-[100px]" />
             </TableCell>
           </TableRow>
         )

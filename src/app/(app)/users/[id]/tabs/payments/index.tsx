@@ -54,7 +54,7 @@ export function Payments({ userId }: PaymentProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead style={{ width: 250 }}>
+              <TableHead style={{ width: 320 }}>
                 <div className="flex items-center gap-2">
                   <span>Amount</span>
                   {isLoadingPayments && (
@@ -63,8 +63,8 @@ export function Payments({ userId }: PaymentProps) {
                 </div>
               </TableHead>
               <TableHead style={{ width: 320 }}>Vehicle</TableHead>
-              <TableHead style={{ width: 300 }}>Status</TableHead>
-              <TableHead style={{ width: 280 }}>Payment date</TableHead>
+              <TableHead style={{ width: 320 }}>Status</TableHead>
+              <TableHead style={{ width: 100 }}>Payment date</TableHead>
             </TableRow>
           </TableHeader>
 

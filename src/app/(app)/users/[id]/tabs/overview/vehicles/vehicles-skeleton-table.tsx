@@ -14,13 +14,13 @@ export function VehiclesSkeletonTable({
         return (
           <TableRow key={row}>
             <TableCell>
-              <Skeleton className="h-4 w-[200px]" />
+              <Skeleton className="h-4 w-[170px]" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-[120px]" />
+              <Skeleton className="h-4 w-[170px]" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-[120px]" />
+              <Skeleton className="h-4 w-[170px]" />
             </TableCell>
             <TableCell>
               <Skeleton className="h-4 w-[90px]" />
