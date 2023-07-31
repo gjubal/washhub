@@ -79,8 +79,8 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
         await updateVehicle(data)
       } else {
         await createVehicle(data)
-        router.back()
       }
+      router.back()
     } catch {
       console.log('Error saving the vehicle')
     }
@@ -89,7 +89,7 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
   async function onDeleteVehicle() {
     try {
       await deleteVehicle()
-      router.push('/dashboard')
+      router.back()
     } catch {
       console.log('Error deleting the vehicle')
     }

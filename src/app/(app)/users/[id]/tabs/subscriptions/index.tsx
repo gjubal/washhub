@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { SubscriptionEntity, VehicleEntity } from '@/types/entities'
+import { SubscriptionEntity } from '@/types/entities'
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons'
 import { Loader2 } from 'lucide-react'
 import {
@@ -18,8 +18,8 @@ import {
 import { SubscriptionsSkeletonTable } from './subscriptions-skeleton-table'
 import { Fragment, useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { VehicleForm } from './vehicle-form'
 import { SubscriptionForm } from './subscription-form'
+import { useRouter } from 'next/navigation'
 
 dayjs.extend(relativeTime)
 
@@ -36,30 +36,11 @@ export type Subscription = SubscriptionEntity & {
   }
 }
 
-type VehicleRow = Record<string, Omit<VehicleEntity, 'subscriptions'>>
 type SubscriptionRow = Record<string, SubscriptionEntity>
 
 export function Subscriptions({ userId }: SubscriptionProps) {
-  const [vehicleRows, setVehicleRows] = useState<VehicleRow>({})
   const [subscriptionRows, setSubscriptionRows] = useState<SubscriptionRow>({})
-
-  const toggleVehicleRowOpen = useCallback(
-    (vehicleId: string, vehicleData: Omit<VehicleEntity, 'subscriptions'>) => {
-      setVehicleRows((prevRow) => {
-        if (prevRow[vehicleId]) {
-          const newOuterRows = { ...prevRow }
-          delete newOuterRows[vehicleId]
-          return newOuterRows
-        } else {
-          return {
-            ...prevRow,
-            [vehicleId]: vehicleData,
-          }
-        }
-      })
-    },
-    [setVehicleRows],
-  )
+  const router = useRouter()
 
   const toggleSubscriptionRowOpen = useCallback(
     (subscriptionId: string, subscriptionData: SubscriptionEntity) => {
@@ -127,9 +108,8 @@ export function Subscriptions({ userId }: SubscriptionProps) {
                           type="button"
                           className="h-2 border-none bg-transparent font-normal text-black hover:bg-transparent focus:bg-transparent active:bg-transparent"
                           onClick={() =>
-                            toggleVehicleRowOpen(
-                              subscription.vehicle?.id,
-                              subscription.vehicle,
+                            router.push(
+                              `/users/${userId}/vehicle/${subscription.vehicle?.id}`,
                             )
                           }
                         >
@@ -182,17 +162,6 @@ export function Subscriptions({ userId }: SubscriptionProps) {
                         </time>
                       </TableCell>
                     </TableRow>
-                    {vehicleRows[subscription.vehicle?.id] &&
-                      subscription.active && (
-                        <TableRow>
-                          <TableCell colSpan={5}>
-                            <VehicleForm
-                              userId={userId}
-                              vehicle={vehicleRows[subscription.vehicle?.id]}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      )}
                     {subscriptionRows[subscription.id] && (
                       <TableRow>
                         <TableCell colSpan={5}>

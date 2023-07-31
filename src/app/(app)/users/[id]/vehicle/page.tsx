@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { VehicleForm } from '../../tabs/subscriptions/vehicle-form'
+import { VehicleForm } from '../tabs/subscriptions/vehicle-form'
 
 interface CreateVehicleProps {
   params: { id: string }

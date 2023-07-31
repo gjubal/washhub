@@ -94,8 +94,8 @@ export function PaymentsSearch({ userId }: PaymentsSearchProps) {
                   <CommandItem key={payment.id} value={payment.id}>
                     <CreditCard className="mr-2 h-3 w-3" />
                     <span>
-                      {payment.vehicle.year} {payment.vehicle.make}{' '}
-                      {payment.vehicle.model} - ${payment.amount}
+                      {payment.vehicle?.year} {payment.vehicle?.make}{' '}
+                      {payment.vehicle?.model} - ${payment.amount}
                     </span>
                     <span className="ml-auto text-muted-foreground">
                       {dayjs(payment.paymentDate).format('MM/DD/YYYY')}

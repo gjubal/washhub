@@ -31,3 +31,43 @@ export async function PUT(request: Request, { params }: UpdateVehicleParams) {
 
   return NextResponse.json({ vehicle })
 }
+
+interface DeleteVehicleParams {
+  params: { id: string; vehicleId: string }
+}
+
+export async function DELETE(_: Request, { params }: DeleteVehicleParams) {
+  const vehicle = await prisma.vehicle.findUniqueOrThrow({
+    where: {
+      id: params.vehicleId,
+    },
+  })
+
+  const vehicleSubscriptions = await prisma.subscription.findMany({
+    where: {
+      vehicleId: vehicle.id,
+    },
+  })
+
+  await prisma.payment.deleteMany({
+    where: {
+      subscriptionId: {
+        in: vehicleSubscriptions.map((subscription) => subscription.id),
+      },
+    },
+  })
+
+  await prisma.subscription.deleteMany({
+    where: {
+      vehicleId: vehicle.id,
+    },
+  })
+
+  await prisma.vehicle.delete({
+    where: {
+      id: vehicle.id,
+    },
+  })
+
+  return NextResponse.json({ vehicle })
+}

@@ -121,9 +121,7 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                             vehicle.id,
                             vehicle.subscriptions[0],
                           )
-                        : router.push(
-                            `/users/${user.id}/create/vehicle/${vehicle.id}`,
-                          )
+                        : router.push(`/users/${user.id}/vehicle/${vehicle.id}`)
                     }
                   >
                     <TableCell>

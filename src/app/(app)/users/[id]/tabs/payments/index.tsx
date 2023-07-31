@@ -25,7 +25,7 @@ export interface PaymentProps {
 }
 
 export type Payment = PaymentEntity & {
-  vehicle: {
+  vehicle?: {
     id: string
     year: number
     make: string

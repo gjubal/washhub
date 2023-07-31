@@ -23,13 +23,13 @@ export function CustomerDropdown({ userId }: { userId: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <Link href={`/users/${userId}/create/vehicle`} prefetch={false}>
+        <Link href={`/users/${userId}/vehicle`} prefetch={false}>
           <DropdownMenuItem className="flex cursor-pointer items-center gap-2">
             <CarIcon className="h-4 w-4" />
             Add vehicle
           </DropdownMenuItem>
         </Link>
-        <Link href={`/users/${userId}/create/subscription`} prefetch={false}>
+        <Link href={`/users/${userId}/subscription`} prefetch={false}>
           <DropdownMenuItem className="flex cursor-pointer items-center gap-2">
             <Clipboard className="h-4 w-4" />
             Add subscription
