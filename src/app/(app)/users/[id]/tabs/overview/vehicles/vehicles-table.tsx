@@ -23,6 +23,7 @@ import {
   SubscriptionEntity,
   PaymentEntity,
 } from '@/types/entities'
+import { useRouter } from 'next/navigation'
 
 interface VehiclesTableProps {
   user: UserEntity | undefined
@@ -36,11 +37,7 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
   const [outerRows, setOuterRows] = useState<OuterRow>({})
   const [innerRows, setInnerRows] = useState<InnerRow>({})
 
-  const hasSubscription = useCallback(
-    (vehicle: VehicleEntity) =>
-      !!vehicle.subscriptions?.length && vehicle.subscriptions?.length > 0,
-    [],
-  )
+  const router = useRouter()
 
   const toggleOuterRowOpen = useCallback(
     (vehicleId: string, subscription: SubscriptionEntity) => {
@@ -79,17 +76,15 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
   )
 
   const isOverdue = useCallback((vehicle: VehicleEntity) => {
-    if (hasSubscription(vehicle)) {
-      const subscription = vehicle.subscriptions?.[0] as SubscriptionEntity
-      const lastPaymentDate = dayjs(
-        subscription.payments[subscription.payments.length - 1].paymentDate,
-      )
-      const now = dayjs()
-      const cutoutDaysAmount = subscription.type === 'monthly' ? 30 : 365
+    const subscription = vehicle.subscriptions?.[0] as SubscriptionEntity
+    const lastPaymentDate = dayjs(
+      subscription.payments[subscription.payments.length - 1].paymentDate,
+    )
+    const now = dayjs()
+    const cutoutDaysAmount = subscription.type === 'monthly' ? 30 : 365
 
-      const daysSinceLastPayment = now.diff(lastPaymentDate, 'days')
-      return daysSinceLastPayment > cutoutDaysAmount
-    }
+    const daysSinceLastPayment = now.diff(lastPaymentDate, 'days')
+    return daysSinceLastPayment > cutoutDaysAmount
   }, [])
 
   return (
@@ -121,8 +116,14 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                   <TableRow
                     className="cursor-pointer"
                     onClick={() =>
-                      vehicle.subscriptions?.length &&
-                      toggleOuterRowOpen(vehicle.id, vehicle.subscriptions[0])
+                      vehicle.subscriptions?.length
+                        ? toggleOuterRowOpen(
+                            vehicle.id,
+                            vehicle.subscriptions[0],
+                          )
+                        : router.push(
+                            `/users/${user.id}/create/vehicle/${vehicle.id}`,
+                          )
                     }
                   >
                     <TableCell>
