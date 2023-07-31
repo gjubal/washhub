@@ -57,6 +57,12 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
     },
   })
 
+  const { mutateAsync: createVehicle } = useMutation(
+    async (data: VehicleFormSchema) => {
+      await axios.post(`/api/users/${userId}/vehicles`, data)
+    },
+  )
+
   const { mutateAsync: updateVehicle } = useMutation(
     async (data: VehicleFormSchema) => {
       await axios.put(`/api/users/${userId}/vehicles/${vehicle?.id}`, data)
@@ -72,7 +78,8 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
       if (vehicle?.id) {
         await updateVehicle(data)
       } else {
-        // await createVehicle(data)
+        await createVehicle(data)
+        router.back()
       }
     } catch {
       console.log('Error saving the vehicle')
