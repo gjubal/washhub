@@ -111,6 +111,7 @@ export function SubscriptionForm({
         await updateSubscription(data)
       } else {
         await createSubscription(data)
+        router.back()
       }
     } catch {
       console.log('Error saving the subscription')
