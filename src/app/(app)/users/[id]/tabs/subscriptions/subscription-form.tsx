@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useEffect, useState } from 'react'
+import { useToast } from '@/hooks/useToast'
 
 type Subscription = Omit<SubscriptionPrisma, 'vehicleId'> & {
   vehicle: {
@@ -77,6 +78,7 @@ export function SubscriptionForm({
   const [newVehicleId, setNewVehicleId] = useState<string | undefined>()
 
   const router = useRouter()
+  const { toast } = useToast()
   const subscriptionForm = useForm<SubscriptionFormSchema>({
     resolver: zodResolver(subscriptionFormSchema(subscription)),
     defaultValues: {
@@ -114,7 +116,11 @@ export function SubscriptionForm({
         router.back()
       }
     } catch {
-      console.log('Error saving the subscription')
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: `An error ocurred while trying to save changes.`,
+        variant: 'destructive',
+      })
     }
   }
 
@@ -123,7 +129,11 @@ export function SubscriptionForm({
       await deleteSubscription()
       router.push('/dashboard')
     } catch {
-      console.log('Error deleting the subscription')
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: `An error ocurred while trying to delete the subscription.`,
+        variant: 'destructive',
+      })
     }
   }
 

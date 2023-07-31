@@ -12,6 +12,7 @@ import axios from 'axios'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/navigation'
 import { VehicleEntity } from '@/types/entities'
+import { useToast } from '@/hooks/useToast'
 
 interface VehicleFormProps {
   userId: string
@@ -48,6 +49,7 @@ export type VehicleFormSchema = z.infer<typeof vehicleFormSchema>
 
 export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const vehicleForm = useForm<VehicleFormSchema>({
     resolver: zodResolver(vehicleFormSchema),
     defaultValues: {
@@ -82,7 +84,11 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
       }
       router.back()
     } catch {
-      console.log('Error saving the vehicle')
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: `An error ocurred while trying to save changes.`,
+        variant: 'destructive',
+      })
     }
   }
 
@@ -91,7 +97,11 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
       await deleteVehicle()
       router.back()
     } catch {
-      console.log('Error deleting the vehicle')
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: `An error ocurred while trying to delete the vehicle.`,
+        variant: 'destructive',
+      })
     }
   }
 

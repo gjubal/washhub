@@ -12,6 +12,7 @@ import axios from 'axios'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 import { User } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/useToast'
 
 interface UserFormProps {
   user: User
@@ -46,6 +47,7 @@ export type EditUserFormSchema = z.infer<typeof editUserFormSchema>
 
 export function UserForm({ user }: UserFormProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const editUserForm = useForm<EditUserFormSchema>({
     resolver: zodResolver(editUserFormSchema),
     defaultValues: {
@@ -70,7 +72,11 @@ export function UserForm({ user }: UserFormProps) {
     try {
       await updateUser(data)
     } catch {
-      console.log('Error saving the user')
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: `An error ocurred while trying to save changes.`,
+        variant: 'destructive',
+      })
     }
   }
 
@@ -79,7 +85,11 @@ export function UserForm({ user }: UserFormProps) {
       await deleteUser()
       router.push('/dashboard')
     } catch {
-      console.log('Error deleting the user')
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: `An error ocurred while trying to delete the user.`,
+        variant: 'destructive',
+      })
     }
   }
 
