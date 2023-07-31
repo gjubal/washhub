@@ -85,10 +85,13 @@ export async function MonthlyChurnRate() {
         <BarChart className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-1">
-        <span className="text-2xl font-bold">{String(currentChurnRate)}%</span>
+        <span className="text-2xl font-bold">
+          {currentChurnRate.toFixed(2)}%
+        </span>
         {difference && (
           <p className="text-xs text-muted-foreground">
-            {difference > 0 ? `+ ` : ``} {difference}% than last month
+            {difference > 0 ? `+ ` : ``} {difference.toFixed(2)}% than last
+            month
           </p>
         )}
       </CardContent>
