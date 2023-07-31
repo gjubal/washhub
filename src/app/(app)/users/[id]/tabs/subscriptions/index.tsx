@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { SubscriptionEntity } from '@/types/entities'
+import { SubscriptionEntity, VehicleEntity } from '@/types/entities'
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons'
 import { Loader2 } from 'lucide-react'
 import {
@@ -16,7 +16,7 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import { SubscriptionsSkeletonTable } from './subscriptions-skeleton-table'
-import { Fragment, useCallback, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { SubscriptionForm } from './subscription-form'
 import { useRouter } from 'next/navigation'
@@ -40,6 +40,7 @@ type SubscriptionRow = Record<string, SubscriptionEntity>
 
 export function Subscriptions({ userId }: SubscriptionProps) {
   const [subscriptionRows, setSubscriptionRows] = useState<SubscriptionRow>({})
+  const [vehicles, setVehicles] = useState<VehicleEntity[]>([])
   const router = useRouter()
 
   const toggleSubscriptionRowOpen = useCallback(
@@ -59,6 +60,25 @@ export function Subscriptions({ userId }: SubscriptionProps) {
     },
     [setSubscriptionRows],
   )
+
+  const { data: vehiclesData } = useQuery({
+    queryKey: ['vehicles', userId],
+    queryFn: async () => {
+      const response = await axios.get<Record<'vehicles', VehicleEntity[]>>(
+        `/api/users/${userId}/vehicles`,
+      )
+      return response.data.vehicles
+    },
+    refetchInterval: 15 * 1000,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
+  })
+
+  useEffect(() => {
+    if (vehiclesData) {
+      setVehicles(vehiclesData)
+    }
+  }, [vehiclesData])
 
   const { data: subscriptions, isLoading: isLoadingSubscriptions } = useQuery<
     Subscription[]
@@ -162,23 +182,18 @@ export function Subscriptions({ userId }: SubscriptionProps) {
                         </time>
                       </TableCell>
                     </TableRow>
-                    {subscriptionRows[subscription.id] && (
-                      <TableRow>
-                        <TableCell colSpan={5}>
-                          <SubscriptionForm
-                            userId={userId}
-                            subscription={subscription}
-                            vehicles={subscriptions
-                              .map((subscription) => subscription.vehicle)
-                              .filter(
-                                (vehicle, index, self) =>
-                                  index ===
-                                  self.findIndex((v) => v.id === vehicle.id),
-                              )}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    )}
+                    {subscriptionRows[subscription.id] &&
+                      subscriptionRows[subscription.id].active && (
+                        <TableRow>
+                          <TableCell colSpan={5}>
+                            <SubscriptionForm
+                              userId={userId}
+                              subscription={subscription}
+                              vehicles={vehicles}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      )}
                   </Fragment>
                 ))
               ) : (

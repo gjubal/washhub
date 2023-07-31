@@ -221,7 +221,7 @@ export function SubscriptionForm({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {vehicles.map(
+                {vehicles?.map(
                   (vehicle) =>
                     vehicle.id !== subscription?.vehicle.id && (
                       <SelectItem key={vehicle.id} value={vehicle.id}>

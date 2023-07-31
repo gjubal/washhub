@@ -1,6 +1,21 @@
 import { prisma } from '@/lib/db'
 import { NextResponse } from 'next/server'
 
+export async function GET(_: Request, { params }: { params: { id: string } }) {
+  const userId = params.id
+  const vehicles = await prisma.vehicle.findMany({
+    where: {
+      user: {
+        id: userId,
+      },
+    },
+  })
+
+  return NextResponse.json({
+    vehicles: vehicles.map(({ userId, ...vehicle }) => vehicle),
+  })
+}
+
 export async function POST(
   request: Request,
   { params }: { params: { id: string } },
