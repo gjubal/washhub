@@ -23,7 +23,7 @@ import {
 
 interface SubscriptionFormProps {
   userId: string
-  subscription: Omit<Subscription, 'vehicleId'> & {
+  subscription?: Omit<Subscription, 'vehicleId'> & {
     vehicle: {
       id: string
       year: number
@@ -41,6 +41,8 @@ const subscriptionFormSchema = z.object({
   newVehicleId: z
     .string()
     .min(2, { message: 'Please provide a valid vehicle ID.' }),
+  type: z.enum(['annual', 'monthly']).optional(),
+  price: z.number().optional(),
 })
 
 export type SubscriptionFormSchema = z.infer<typeof subscriptionFormSchema>
@@ -54,26 +56,32 @@ export function SubscriptionForm({
   const subscriptionForm = useForm<SubscriptionFormSchema>({
     resolver: zodResolver(subscriptionFormSchema),
     defaultValues: {
-      currentVehicle: `${subscription.vehicle.year} ${subscription.vehicle.make} ${subscription.vehicle.model}`,
+      currentVehicle:
+        subscription?.id &&
+        `${subscription.vehicle.year} ${subscription.vehicle.make} ${subscription.vehicle.model}`,
     },
   })
 
   const { mutateAsync: updateSubscription } = useMutation(
     async (data: SubscriptionFormSchema) => {
       await axios.put(
-        `/api/users/${userId}/subscription/${subscription.id}`,
+        `/api/users/${userId}/subscription/${subscription?.id}`,
         data,
       )
     },
   )
 
   const { mutateAsync: deleteSubscription } = useMutation(async () => {
-    await axios.delete(`/api/users/${userId}/subscriptions/${subscription.id}`)
+    await axios.delete(`/api/users/${userId}/subscriptions/${subscription?.id}`)
   })
 
   async function onSaveSubscription(data: SubscriptionFormSchema) {
     try {
-      await updateSubscription(data)
+      if (subscription?.id) {
+        await updateSubscription(data)
+      } else {
+        // await createSubscription(data)
+      }
     } catch {
       console.log('Error saving the subscription')
     }
@@ -98,16 +106,59 @@ export function SubscriptionForm({
     <FormProvider {...subscriptionForm}>
       <form onSubmit={handleSubmit(onSaveSubscription)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="currentVehicle">Current vehicle</Label>
-          <Input id="currentVehicle" {...register('currentVehicle')} readOnly />
-          {errors.currentVehicle && (
-            <p className="text-sm font-medium text-red-500 dark:text-red-400">
-              {errors.currentVehicle.message}
-            </p>
+          {subscription?.id ? (
+            <>
+              <Label htmlFor="currentVehicle">Current vehicle</Label>
+              <Input
+                id="currentVehicle"
+                {...register('currentVehicle')}
+                readOnly={!!subscription?.id}
+              />
+              {errors.currentVehicle && (
+                <p className="text-sm font-medium text-red-500 dark:text-red-400">
+                  {errors.currentVehicle.message}
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <Label htmlFor="type">Type</Label>
+              <Select>
+                <SelectTrigger aria-label="Types">
+                  <SelectValue placeholder="Select a type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="annual">Annual</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {errors.type && (
+                <p className="text-sm font-medium text-red-500 dark:text-red-400">
+                  {errors.type.message}
+                </p>
+              )}
+            </>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="newVehicleId">New Vehicle</Label>
+          {!subscription?.id && (
+            <>
+              <Label htmlFor="price">Price ($)</Label>
+              <Input id="price" {...register('price')} placeholder="39.99" />
+              {errors.price && (
+                <p className="text-sm font-medium text-red-500 dark:text-red-400">
+                  {errors.price.message}
+                </p>
+              )}
+            </>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="newVehicleId">
+            {subscription?.id ? 'New Vehicle' : 'Vehicle'}
+          </Label>
           <Select>
             <SelectTrigger aria-label="Vehicles">
               <SelectValue placeholder="Select a vehicle" />
@@ -116,7 +167,7 @@ export function SubscriptionForm({
               <SelectGroup>
                 {vehicles.map(
                   (vehicle) =>
-                    vehicle.id !== subscription.vehicle.id && (
+                    vehicle.id !== subscription?.vehicle.id && (
                       <SelectItem key={vehicle.id} value={vehicle.id}>
                         {vehicle.year} {vehicle.make} {vehicle.model}
                       </SelectItem>
@@ -146,18 +197,20 @@ export function SubscriptionForm({
               <span>Saved!</span>
             </div>
           )}
-          <Button
-            className="w-24 bg-red-500"
-            type="button"
-            disabled={isSubmitting}
-            onClick={onDeleteSubscription}
-          >
-            {isSubmitting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              'Delete'
-            )}
-          </Button>
+          {subscription?.id && (
+            <Button
+              className="w-24 bg-red-500"
+              type="button"
+              disabled={isSubmitting}
+              onClick={onDeleteSubscription}
+            >
+              {isSubmitting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          )}
         </div>
       </form>
     </FormProvider>

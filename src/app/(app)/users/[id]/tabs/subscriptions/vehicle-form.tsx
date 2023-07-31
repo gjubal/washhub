@@ -15,7 +15,7 @@ import { VehicleEntity } from '@/types/entities'
 
 interface VehicleFormProps {
   userId: string
-  vehicle: Omit<VehicleEntity, 'subscriptions'>
+  vehicle?: Omit<VehicleEntity, 'subscriptions'>
 }
 
 const vehicleFormSchema = z.object({
@@ -51,25 +51,29 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
   const vehicleForm = useForm<VehicleFormSchema>({
     resolver: zodResolver(vehicleFormSchema),
     defaultValues: {
-      year: vehicle.year.toString(),
-      make: vehicle.make,
-      model: vehicle.model,
+      year: vehicle?.year.toString(),
+      make: vehicle?.make,
+      model: vehicle?.model,
     },
   })
 
   const { mutateAsync: updateVehicle } = useMutation(
     async (data: VehicleFormSchema) => {
-      await axios.put(`/api/users/${userId}/vehicles/${vehicle.id}`, data)
+      await axios.put(`/api/users/${userId}/vehicles/${vehicle?.id}`, data)
     },
   )
 
   const { mutateAsync: deleteVehicle } = useMutation(async () => {
-    await axios.delete(`/api/users/${userId}/vehicles/${vehicle.id}`)
+    await axios.delete(`/api/users/${userId}/vehicles/${vehicle?.id}`)
   })
 
   async function onSaveVehicle(data: VehicleFormSchema) {
     try {
-      await updateVehicle(data)
+      if (vehicle?.id) {
+        await updateVehicle(data)
+      } else {
+        // await createVehicle(data)
+      }
     } catch {
       console.log('Error saving the vehicle')
     }
@@ -135,18 +139,20 @@ export function VehicleForm({ userId, vehicle }: VehicleFormProps) {
               <span>Saved!</span>
             </div>
           )}
-          <Button
-            className="w-24 bg-red-500"
-            type="button"
-            disabled={isSubmitting}
-            onClick={onDeleteVehicle}
-          >
-            {isSubmitting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              'Delete'
-            )}
-          </Button>
+          {vehicle?.id && (
+            <Button
+              className="w-24 bg-red-500"
+              type="button"
+              disabled={isSubmitting}
+              onClick={onDeleteVehicle}
+            >
+              {isSubmitting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          )}
         </div>
       </form>
     </FormProvider>

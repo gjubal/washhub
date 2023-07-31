@@ -33,7 +33,7 @@ export default async function UserPage({ params }: UserPageProps) {
         <h2 className="truncate text-3xl font-bold tracking-tight">Customer</h2>
 
         <div className="flex items-center gap-2">
-          <CustomerDropdown />
+          <CustomerDropdown userId={userId} />
           <Button variant="secondary">
             <User2Icon className="mr-2 h-4 w-4" />
             <span>Download receipts</span>

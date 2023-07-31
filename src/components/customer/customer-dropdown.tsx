@@ -11,8 +11,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { PlusCircledIcon } from '@radix-ui/react-icons'
+import Link from 'next/link'
 
-export function CustomerDropdown() {
+export function CustomerDropdown({ userId }: { userId: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,20 +23,18 @@ export function CustomerDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          className="flex items-center gap-2"
-          onClick={() => console.log('clicked')}
-        >
-          <CarIcon className="h-4 w-4" />
-          Add vehicle
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex items-center gap-2"
-          onClick={() => console.log('clicked')}
-        >
-          <Clipboard className="h-4 w-4" />
-          Add subscription
-        </DropdownMenuItem>
+        <Link href={`/users/${userId}/create/vehicle`} prefetch={false}>
+          <DropdownMenuItem className="flex cursor-pointer items-center gap-2">
+            <CarIcon className="h-4 w-4" />
+            Add vehicle
+          </DropdownMenuItem>
+        </Link>
+        <Link href={`/users/${userId}/create/subscription`} prefetch={false}>
+          <DropdownMenuItem className="flex cursor-pointer items-center gap-2">
+            <Clipboard className="h-4 w-4" />
+            Add subscription
+          </DropdownMenuItem>
+        </Link>
       </DropdownMenuContent>
     </DropdownMenu>
   )
