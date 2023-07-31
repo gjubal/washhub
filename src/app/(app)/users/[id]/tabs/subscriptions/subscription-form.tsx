@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FieldErrors, FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
@@ -11,7 +11,7 @@ import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/navigation'
-import { Subscription, Vehicle } from '@prisma/client'
+import { Subscription as SubscriptionPrisma, Vehicle } from '@prisma/client'
 import {
   Select,
   SelectContent,
@@ -20,41 +20,65 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useEffect, useState } from 'react'
+
+type Subscription = Omit<SubscriptionPrisma, 'vehicleId'> & {
+  vehicle: {
+    id: string
+    year: number
+    make: string
+    model: string
+  }
+}
 
 interface SubscriptionFormProps {
   userId: string
-  subscription?: Omit<Subscription, 'vehicleId'> & {
-    vehicle: {
-      id: string
-      year: number
-      make: string
-      model: string
-    }
-  }
+  subscription?: Subscription
   vehicles: Omit<Vehicle, 'userId'>[]
 }
 
-const subscriptionFormSchema = z.object({
+const updateSubscriptionSchema = z.object({
   currentVehicle: z
     .string()
     .min(2, { message: 'Please provide a valid vehicle.' }),
   newVehicleId: z
     .string()
     .min(2, { message: 'Please provide a valid vehicle ID.' }),
-  type: z.enum(['annual', 'monthly']).optional(),
-  price: z.number().optional(),
 })
 
-export type SubscriptionFormSchema = z.infer<typeof subscriptionFormSchema>
+const createSubscriptionSchema = z.object({
+  type: z.enum(['annual', 'monthly']),
+  price: z.string().min(1, { message: 'Please provide a valid price.' }),
+  newVehicleId: z
+    .string()
+    .min(2, { message: 'Please provide a valid vehicle ID.' }),
+})
+
+const commonSubscriptionSchema = z.object({
+  currentVehicle: z.string().optional(),
+  newVehicleId: z.string().optional(),
+  type: z.enum(['annual', 'monthly']).optional(),
+  price: z.string().optional(),
+})
+
+const subscriptionFormSchema = (subscription: Subscription | undefined) =>
+  subscription?.id ? updateSubscriptionSchema : createSubscriptionSchema
+
+export type SubscriptionFormSchema = z.infer<
+  typeof updateSubscriptionSchema | typeof createSubscriptionSchema
+>
 
 export function SubscriptionForm({
   userId,
   subscription,
   vehicles,
 }: SubscriptionFormProps) {
+  const [type, setType] = useState<'monthly' | 'annual' | undefined>()
+  const [newVehicleId, setNewVehicleId] = useState<string | undefined>()
+
   const router = useRouter()
   const subscriptionForm = useForm<SubscriptionFormSchema>({
-    resolver: zodResolver(subscriptionFormSchema),
+    resolver: zodResolver(subscriptionFormSchema(subscription)),
     defaultValues: {
       currentVehicle:
         subscription?.id &&
@@ -62,10 +86,16 @@ export function SubscriptionForm({
     },
   })
 
+  const { mutateAsync: createSubscription } = useMutation(
+    async (data: SubscriptionFormSchema) => {
+      await axios.post(`/api/users/${userId}/subscriptions`, data)
+    },
+  )
+
   const { mutateAsync: updateSubscription } = useMutation(
     async (data: SubscriptionFormSchema) => {
       await axios.put(
-        `/api/users/${userId}/subscription/${subscription?.id}`,
+        `/api/users/${userId}/subscriptions/${subscription?.id}`,
         data,
       )
     },
@@ -80,7 +110,7 @@ export function SubscriptionForm({
       if (subscription?.id) {
         await updateSubscription(data)
       } else {
-        // await createSubscription(data)
+        await createSubscription(data)
       }
     } catch {
       console.log('Error saving the subscription')
@@ -99,8 +129,22 @@ export function SubscriptionForm({
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { isSubmitting, isSubmitSuccessful },
+    watch,
+    setValue,
   } = subscriptionForm
+
+  const errors = subscriptionForm.formState.errors as FieldErrors<
+    z.infer<typeof commonSubscriptionSchema>
+  >
+
+  const watchedType = watch('type')
+  const watchedNewVehicleId = watch('newVehicleId')
+
+  useEffect(() => {
+    setType(watchedType)
+    setNewVehicleId(watchedNewVehicleId)
+  }, [watchedType, watchedNewVehicleId])
 
   return (
     <FormProvider {...subscriptionForm}>
@@ -112,18 +156,24 @@ export function SubscriptionForm({
               <Input
                 id="currentVehicle"
                 {...register('currentVehicle')}
-                readOnly={!!subscription?.id}
+                readOnly
               />
-              {errors.currentVehicle && (
+              {errors?.currentVehicle && (
                 <p className="text-sm font-medium text-red-500 dark:text-red-400">
-                  {errors.currentVehicle.message}
+                  {errors?.currentVehicle.message}
                 </p>
               )}
             </>
           ) : (
             <>
               <Label htmlFor="type">Type</Label>
-              <Select>
+              <Select
+                value={type}
+                onValueChange={(value) => {
+                  setValue('type', value as 'monthly' | 'annual')
+                  setType(value as 'monthly' | 'annual')
+                }}
+              >
                 <SelectTrigger aria-label="Types">
                   <SelectValue placeholder="Select a type" />
                 </SelectTrigger>
@@ -134,9 +184,9 @@ export function SubscriptionForm({
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              {errors.type && (
+              {errors?.type && (
                 <p className="text-sm font-medium text-red-500 dark:text-red-400">
-                  {errors.type.message}
+                  {errors?.type.message}
                 </p>
               )}
             </>
@@ -147,9 +197,9 @@ export function SubscriptionForm({
             <>
               <Label htmlFor="price">Price ($)</Label>
               <Input id="price" {...register('price')} placeholder="39.99" />
-              {errors.price && (
+              {errors?.price && (
                 <p className="text-sm font-medium text-red-500 dark:text-red-400">
-                  {errors.price.message}
+                  {errors?.price.message}
                 </p>
               )}
             </>
@@ -159,7 +209,13 @@ export function SubscriptionForm({
           <Label htmlFor="newVehicleId">
             {subscription?.id ? 'New Vehicle' : 'Vehicle'}
           </Label>
-          <Select>
+          <Select
+            value={newVehicleId}
+            onValueChange={(value) => {
+              subscriptionForm.setValue('newVehicleId', value)
+              setNewVehicleId(value)
+            }}
+          >
             <SelectTrigger aria-label="Vehicles">
               <SelectValue placeholder="Select a vehicle" />
             </SelectTrigger>
@@ -176,9 +232,9 @@ export function SubscriptionForm({
               </SelectGroup>
             </SelectContent>
           </Select>
-          {errors.newVehicleId && (
+          {errors?.newVehicleId && (
             <p className="text-sm font-medium text-red-500 dark:text-red-400">
-              {errors.newVehicleId.message}
+              {errors?.newVehicleId.message}
             </p>
           )}
         </div>

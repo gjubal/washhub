@@ -54,3 +54,46 @@ export async function GET(_: Request, { params }: GetUserParams) {
 
   return NextResponse.json({ subscriptions })
 }
+
+export async function POST(request: Request) {
+  const { type, price, newVehicleId } = await request.json()
+
+  const payment = await prisma.payment.create({
+    data: {
+      amount: Number(price),
+      status: 'pending',
+      paymentDate: new Date(),
+      subscription: {
+        create: {
+          type,
+          vehicle: {
+            connect: {
+              id: newVehicleId,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (!payment) {
+    return NextResponse.error()
+  }
+
+  await prisma.payment.update({
+    where: {
+      id: payment.id,
+    },
+    data: {
+      status: 'success',
+    },
+  })
+
+  const subscription = await prisma.subscription.findUniqueOrThrow({
+    where: {
+      id: payment.subscriptionId,
+    },
+  })
+
+  return NextResponse.json({ subscription })
+}
