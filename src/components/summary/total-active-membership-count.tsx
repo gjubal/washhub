@@ -5,7 +5,7 @@ import { BarChart } from 'lucide-react'
 
 export const revalidate = 60 * 15 // 15 minutes
 
-export async function TotalMembershipCount() {
+export async function TotalActiveMembershipCount() {
   const [totalActiveMemberships, totalActiveMembershipsAddedLastMonth] =
     await Promise.all([
       prisma.subscription.aggregate({
@@ -34,7 +34,7 @@ export async function TotalMembershipCount() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-medium">
-          Active memberships
+          Active Memberships
         </CardTitle>
         <BarChart className="h-4 w-4 text-muted-foreground" />
       </CardHeader>

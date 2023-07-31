@@ -1,7 +1,11 @@
 import { Metadata } from 'next'
 import { TotalUserCount } from '@/components/summary/total-user-count'
-import { TotalMembershipCount } from '@/components/summary/total-membership-count'
 import { UsersSearch } from '@/components/search/users-search'
+import { TotalActiveMembershipCount } from '@/components/summary/total-active-membership-count'
+import { TotalInactiveMembershipCount } from '@/components/summary/total-inactive-membership-count'
+import { TotalMonthlyRevenue } from '@/components/summary/total-monthly-revenue'
+import { TotalAnnualRevenue } from '@/components/summary/total-annual-revenue'
+import { MonthlyChurnRate } from '@/components/summary/monthly-churn-rate'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -18,7 +22,11 @@ export default function DashboardPage() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <TotalUserCount />
-        <TotalMembershipCount />
+        <TotalActiveMembershipCount />
+        <TotalMonthlyRevenue />
+        <TotalInactiveMembershipCount />
+        <TotalAnnualRevenue />
+        <MonthlyChurnRate />
       </div>
     </div>
   )
