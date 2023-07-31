@@ -23,11 +23,14 @@ export async function PUT(request: Request, { params }: SubscriptionsParams) {
 export async function DELETE(_: Request, { params }: SubscriptionsParams) {
   const { id: userId, subscriptionId } = params
 
-  const subscription = await prisma.subscription.delete({
+  const subscription = await prisma.subscription.update({
     where: { id: subscriptionId },
+    data: {
+      active: false,
+    },
   })
 
   if (!subscription) return NextResponse.error()
 
-  return NextResponse.json({ status: 'success' })
+  return NextResponse.json({ subscription })
 }
