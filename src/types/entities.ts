@@ -6,7 +6,7 @@ export type SubscriptionEntity = Omit<Subscription, 'vehicleId'> & {
   payments: PaymentEntity[]
 }
 export type VehicleEntity = Omit<Vehicle, 'userId'> & {
-  subscriptions: SubscriptionEntity[]
+  subscriptions?: SubscriptionEntity[]
 }
 
 export type UserEntity = User & {

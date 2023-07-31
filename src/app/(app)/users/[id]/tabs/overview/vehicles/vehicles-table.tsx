@@ -36,6 +36,12 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
   const [outerRows, setOuterRows] = useState<OuterRow>({})
   const [innerRows, setInnerRows] = useState<InnerRow>({})
 
+  const hasSubscription = useCallback(
+    (vehicle: VehicleEntity) =>
+      !!vehicle.subscriptions?.length && vehicle.subscriptions?.length > 0,
+    [],
+  )
+
   const toggleOuterRowOpen = useCallback(
     (vehicleId: string, subscription: SubscriptionEntity) => {
       setOuterRows((prevOuterRows) => {
@@ -73,15 +79,17 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
   )
 
   const isOverdue = useCallback((vehicle: VehicleEntity) => {
-    const subscription = vehicle.subscriptions[0]
-    const lastPaymentDate = dayjs(
-      subscription.payments[subscription.payments.length - 1].paymentDate,
-    )
-    const now = dayjs()
-    const cutoutDaysAmount = subscription.type === 'monthly' ? 30 : 365
+    if (hasSubscription(vehicle)) {
+      const subscription = vehicle.subscriptions?.[0] as SubscriptionEntity
+      const lastPaymentDate = dayjs(
+        subscription.payments[subscription.payments.length - 1].paymentDate,
+      )
+      const now = dayjs()
+      const cutoutDaysAmount = subscription.type === 'monthly' ? 30 : 365
 
-    const daysSinceLastPayment = now.diff(lastPaymentDate, 'days')
-    return daysSinceLastPayment > cutoutDaysAmount
+      const daysSinceLastPayment = now.diff(lastPaymentDate, 'days')
+      return daysSinceLastPayment > cutoutDaysAmount
+    }
   }, [])
 
   return (
@@ -113,6 +121,7 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                   <TableRow
                     className="cursor-pointer"
                     onClick={() =>
+                      vehicle.subscriptions?.length &&
                       toggleOuterRowOpen(vehicle.id, vehicle.subscriptions[0])
                     }
                   >
@@ -125,7 +134,8 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                     </TableCell>
 
                     <TableCell>
-                      {vehicle.subscriptions[0].active ? (
+                      {vehicle.subscriptions?.length &&
+                      vehicle.subscriptions[0].active ? (
                         isOverdue(vehicle) ? (
                           <div className="flex items-center gap-2 font-medium text-amber-500 dark:text-amber-400">
                             <DotsHorizontalIcon className="h-4 w-4" />
@@ -147,15 +157,15 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                     <TableCell>
                       <div className="font-medium">
                         <span>
-                          {vehicle.subscriptions[0].type[0].toUpperCase()}
-                          {vehicle.subscriptions[0].type.slice(1)}
+                          {vehicle.subscriptions?.[0]?.type[0].toUpperCase()}
+                          {vehicle.subscriptions?.[0]?.type.slice(1)}
                         </span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <time
                         title={dayjs(
-                          vehicle.subscriptions[0].payments[
+                          vehicle.subscriptions?.[0]?.payments[
                             vehicle.subscriptions[0].payments.length - 1
                           ].paymentDate,
                         )
@@ -164,7 +174,7 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                         className="text-muted-foreground"
                       >
                         {dayjs(
-                          vehicle.subscriptions[0].payments[
+                          vehicle.subscriptions?.[0]?.payments[
                             vehicle.subscriptions[0].payments.length - 1
                           ].paymentDate,
                         ).format('MM/DD/YYYY')}
@@ -172,7 +182,7 @@ export function VehiclesTable({ user, isLoadingUser }: VehiclesTableProps) {
                     </TableCell>
                   </TableRow>
                   {outerRows[vehicle.id] &&
-                    vehicle.subscriptions.map((subscription) => (
+                    vehicle.subscriptions?.map((subscription) => (
                       <Fragment key={subscription.id}>
                         <TableRow
                           className="cursor-pointer"
