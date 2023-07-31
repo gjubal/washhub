@@ -1,34 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# WashHub: A CSR Portal for Car Wash Services
 
-## Getting Started
+## Table of Contents
 
-First, run the development server:
+- [WashHub: A CSR Portal for Car Wash Services](#washhub-a-csr-portal-for-car-wash-services)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Technologies](#technologies)
+  - [Features](#features)
+  - [Live Project](#live-project)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+WashHub is a customer service representative (CSR) portal developed as a part of a membership and loyalty platform for car wash services. This portal is designed to enhance the efficiency of CSRs in supporting customers who come up with queries or issues.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Typically, a CSR will encounter questions such as:
+- "I want to cancel my account."
+- "I have a question about a recent purchase."
+- "I purchased a new vehicle and I want my subscription transferred."
+- "I am not able to get a wash" (usually due to their account being in an "overdue" status resulting from a failed membership payment).
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This platform allows customers to sign up for subscription-based monthly memberships, purchase single washes, update their payment information, redeem coupons, and manage their accounts. The project provides a complete solution to manage these queries effectively.
 
-## Learn More
+## Technologies
 
-To learn more about Next.js, take a look at the following resources:
+This project has been developed using the following technologies:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js 13 (app router)
+- TypeScript
+- Prisma
+- Next-Auth
+- TailwindCSS
+- RadixUI
+- zod
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Features
 
-## Deploy on Vercel
+The key functionalities of the WashHub CSR portal are:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **View a list of users**: CSRs can view a comprehensive list of all registered users of the mobile app.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+2. **Quickly find and view details for a specific user**: CSRs have the ability to access detailed information about a specific user, including their account information, active vehicle subscriptions, and purchase history.
+
+3. **Edit account information**: CSRs can modify account information for users. This includes changes in details such as name, email, phone number, or other important details.
+
+4. **View/Edit vehicle subscriptions**: CSRs can view and edit vehicle subscriptions for users. This feature allows adding, removing, or transferring subscriptions.
+
+## Live Project
+
+To see a live demo of the WashHub platform, please visit: [https://washhub.vercel.app/](https://washhub.vercel.app/)
