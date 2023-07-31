@@ -16,9 +16,10 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import { SubscriptionsSkeletonTable } from './subscriptions-skeleton-table'
-import { useCallback, useState } from 'react'
+import { Fragment, useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { VehicleForm } from './vehicle-form'
+import { SubscriptionForm } from './subscription-form'
 
 dayjs.extend(relativeTime)
 
@@ -119,8 +120,8 @@ export function Subscriptions({ userId }: SubscriptionProps) {
             <TableBody>
               {subscriptions?.length ? (
                 subscriptions.map((subscription) => (
-                  <>
-                    <TableRow key={subscription.id}>
+                  <Fragment key={subscription.id}>
+                    <TableRow>
                       <TableCell>
                         <Button
                           type="button"
@@ -192,7 +193,24 @@ export function Subscriptions({ userId }: SubscriptionProps) {
                           </TableCell>
                         </TableRow>
                       )}
-                  </>
+                    {subscriptionRows[subscription.id] && (
+                      <TableRow>
+                        <TableCell colSpan={5}>
+                          <SubscriptionForm
+                            userId={userId}
+                            subscription={subscription}
+                            vehicles={subscriptions
+                              .map((subscription) => subscription.vehicle)
+                              .filter(
+                                (vehicle, index, self) =>
+                                  index ===
+                                  self.findIndex((v) => v.id === vehicle.id),
+                              )}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
                 ))
               ) : (
                 <TableRow>
